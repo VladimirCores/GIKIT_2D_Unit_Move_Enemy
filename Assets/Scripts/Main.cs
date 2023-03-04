@@ -141,7 +141,9 @@ public class Main : MonoBehaviour
         if (unitPrefab.scene.IsValid() == false) {
             unitPrefab = Instantiate(unitPrefab);
             targetPosition = unitPrefab.transform.position;
+            
             (unitPrefab.GetComponent<Unit>() as Unit).onTriggerEnter.AddListener(OnUnitCollide);
+            
             getButtonCreateMarineGO.SetActive(false);
             getTextEnemyKilledGO.SetActive(true);
             _enemyKilledCounter = 0;
@@ -155,6 +157,7 @@ public class Main : MonoBehaviour
         bool isEnemyCollision = collisionGameObjectParent == enemiesContainer.transform;
         Debug.Log("> OnUnitCollide: isEnemyCollision = " + isEnemyCollision);
         float scaleX = healthsBar.rectTransform.localScale.x;
+        
         if (isEnemyCollision) {
             _enemyKilledCounter++;
             scaleX -= collider.gameObject.GetComponent<Enemy>().Damage;
