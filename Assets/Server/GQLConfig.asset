@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Endpoint: https://welcome-pony-27.hasura.app/v1/graphql
   Files:
-  - {fileID: 0}
+  - {fileID: -2997410325540601474, guid: f18daff66ac0e3eabb22f86f29a43d93, type: 3}
   AuthScheme: Bearer
   CustomHeaders:
   - Key: x-hasura-admin-secret
