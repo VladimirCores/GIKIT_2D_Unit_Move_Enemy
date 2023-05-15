@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using SimpleGraphQL;
 
 public class Main : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class Main : MonoBehaviour
     public Text textEnemyKilled;
     public Text textGameOver;
     public Text textGameWin;
+
+    public GraphQLConfig Config;
 
     [Range(3, 10)]
     public int healthCounter = 3;
@@ -47,6 +50,8 @@ public class Main : MonoBehaviour
         get { return textGameWin.gameObject; }
     }
 
+    private GraphQLClient _gql;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -63,6 +68,34 @@ public class Main : MonoBehaviour
 
         _healthLists = spawnPrefabWithUniquePositionOnStageInContainer(healthCounter, healthPrefab, healthsContainer);
         _enemyLists = spawnPrefabWithUniquePositionOnStageInContainer(enemyCounter, enemyPrefab, enemiesContainer);
+
+        _gql = new GraphQLClient(Config);
+        _CallQueryCoroutine();
+        // StartCoroutine(_CallQueryCoroutine());
+        // string results = await _gql.Send(query.ToRequest(new Dictionary<string, object>{}));
+        // Debug.Log(results);
+    }
+
+    public async void _CallQueryCoroutine() 
+    {
+        Query query = _gql.FindQuery("leaderboard", "GetLeaderboard", OperationType.Query);
+        string results = await _gql.Send(query.ToRequest());
+        Debug.Log(results);
+        // yield return response.AsCoroutine();
+
+        // // Assert.IsNull(response.Result.Errors);
+
+        // var data = response.Result.Data;
+        // Debug.Log("GraphQL Result: " + data);
+        // yield return new WaitForSend(
+        //     _gql.Send(query.ToRequest(new Dictionary<string, object>{})), 
+        //     OnCallQueryCoroutineComplete
+        // );
+    }
+
+    public void OnCallQueryCoroutineComplete(string result) 
+    {
+        Debug.Log("GraphQL Result: " + result);
     }
 
     List<GameObject> spawnPrefabWithUniquePositionOnStageInContainer(int counter, GameObject prefab, GameObject container) {

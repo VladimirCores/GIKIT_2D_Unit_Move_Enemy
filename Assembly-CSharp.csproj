@@ -41,11 +41,18 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets/Scripts/_Utils.cs" />
+     <Compile Include="Assets/graphQl-client/Scripts/Core/GraphApi.cs" />
+     <Compile Include="Assets/graphQl-client/Scripts/EventCallbacks/Event.cs" />
      <Compile Include="Assets/Scripts/Enemy.cs" />
+     <Compile Include="Assets/graphQl-client/Demo/Users/User.cs" />
      <Compile Include="Assets/Scripts/Main.cs" />
      <Compile Include="Assets/Scripts/Bullet.cs" />
+     <Compile Include="Assets/graphQl-client/Scripts/EventCallbacks/AllEventInfo.cs" />
+     <Compile Include="Assets/graphQl-client/Scripts/Core/HttpHandler.cs" />
      <Compile Include="Assets/Scripts/Unit.cs" />
+     <Compile Include="Assets/graphQl-client/Demo/Pokemon/Pokemon.cs" />
      <Compile Include="Assets/Scripts/Health.cs" />
+     <Compile Include="Assets/graphQl-client/Scripts/Core/Introspection.cs" />
      <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />
      <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets/TextMesh Pro/Shaders/TMP_Bitmap.shader" />

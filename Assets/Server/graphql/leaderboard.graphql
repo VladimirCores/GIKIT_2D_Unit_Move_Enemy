@@ -1,0 +1,10 @@
+query GetLeaderboard {
+  leaderboard {
+    id
+    score
+    time
+    user {
+      name
+    }
+  }
+}
