@@ -9,9 +9,11 @@ public class Main : MonoBehaviour
     public GameObject healthPrefab;
     public GameObject enemyPrefab;
     public GameObject unitPrefab;
+    public GameObject bulletPrefab;
 
     public GameObject enemiesContainer;
     public GameObject healthsContainer;
+
     public Image healthsBar;
     
     public Text textEnemyKilled;
@@ -23,7 +25,7 @@ public class Main : MonoBehaviour
     [Range(3, 10)]
     public int healthCounter = 3;
 
-    [Range(10, 15)]
+    [Range(3, 15)]
     public int enemyCounter = 3;
 
     private List<GameObject> _enemyLists;
@@ -51,6 +53,7 @@ public class Main : MonoBehaviour
     }
 
     private GraphQLClient _gql;
+    private float _timerStart;
 
     // Start is called before the first frame update
     void Start()
@@ -173,6 +176,7 @@ public class Main : MonoBehaviour
         Debug.Log("> Pressed");
         if (unitPrefab.scene.IsValid() == false) {
             unitPrefab = Instantiate(unitPrefab);
+            unitPrefab.GetComponent<Unit>().bulletPrefab = bulletPrefab;
             targetPosition = unitPrefab.transform.position;
             
             (unitPrefab.GetComponent<Unit>() as Unit).onTriggerEnter.AddListener(OnUnitCollide);
@@ -181,6 +185,7 @@ public class Main : MonoBehaviour
             getTextEnemyKilledGO.SetActive(true);
             _enemyKilledCounter = 0;
             SetCollectedItems(_enemyKilledCounter);
+            _timerStart = Time.time;
         }
     }
 
@@ -217,6 +222,8 @@ public class Main : MonoBehaviour
     void CheckGameComplete() {
         if (_enemyKilledCounter == enemyCounter) {
             getTextGameWinGO.SetActive(true);
+            float gameTime = Time.time - _timerStart;
+            Debug.Log("Game Time: " + gameTime.ToString());
         }
     }
 

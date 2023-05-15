@@ -59,6 +59,8 @@ public class Unit : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log("> Unit -> OnTriggerEnter2D: " + collision);
-        if(onTriggerEnter != null) onTriggerEnter.Invoke(collision);
+        if(onTriggerEnter != null) {
+            onTriggerEnter.Invoke(collision);
+        }
     }
 }
