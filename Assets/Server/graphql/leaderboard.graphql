@@ -1,8 +1,21 @@
 query GetLeaderboard {
-  leaderboard {
+  leaderboard(limit: 10, order_by: {time: desc}) {
     id
     score
     time
+    created_at
+    user {
+      id
+      name
+    }
+  }
+}
+
+mutation AddLeaderboardScore($time: Int, $score: Int, $user_id: uuid) {
+  insert_leaderboard_one(object: {score: $score, time: $time, user_id: $user_id}) {
+    id
+    time
+    score
     user {
       name
     }

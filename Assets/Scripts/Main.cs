@@ -4,6 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using SimpleGraphQL;
 
+[System.Serializable]
+public class LeaderboardsResult
+{
+    public Leaderboard data;
+}
+
+[System.Serializable]
+public class Leaderboard
+{
+    public LeadVO[] leaderboard;
+}
+
 public class Main : MonoBehaviour
 {
     public GameObject healthPrefab;
@@ -27,6 +39,9 @@ public class Main : MonoBehaviour
 
     [Range(3, 15)]
     public int enemyCounter = 3;
+
+    public Transform ContentContainer;
+    public GameObject LeadItemPrefab;
 
     private List<GameObject> _enemyLists;
     private List<GameObject> _healthLists;
@@ -74,26 +89,29 @@ public class Main : MonoBehaviour
 
         _gql = new GraphQLClient(Config);
         _CallQueryCoroutine();
-        // StartCoroutine(_CallQueryCoroutine());
-        // string results = await _gql.Send(query.ToRequest(new Dictionary<string, object>{}));
-        // Debug.Log(results);
     }
+
+    Text GetChildTextByName(GameObject obj, string name) => obj.transform.Find(name)?.gameObject.GetComponent<Text>();
 
     public async void _CallQueryCoroutine() 
     {
         Query query = _gql.FindQuery("leaderboard", "GetLeaderboard", OperationType.Query);
         string results = await _gql.Send(query.ToRequest());
-        Debug.Log(results);
-        // yield return response.AsCoroutine();
-
-        // // Assert.IsNull(response.Result.Errors);
-
-        // var data = response.Result.Data;
-        // Debug.Log("GraphQL Result: " + data);
-        // yield return new WaitForSend(
-        //     _gql.Send(query.ToRequest(new Dictionary<string, object>{})), 
-        //     OnCallQueryCoroutineComplete
-        // );
+        LeaderboardsResult result = JsonUtility.FromJson<LeaderboardsResult>(results);
+        Debug.Log("results = " + results);
+        foreach(Transform child in ContentContainer.transform) Destroy(child.gameObject);
+        foreach (LeadVO leadVO in result.data.leaderboard)
+        {
+            Debug.Log("> leaderboard.leadVO = " + leadVO.score);
+            var leadItem = Instantiate(LeadItemPrefab);
+            // do something with the instantiated item -- for instance
+            GetChildTextByName(leadItem, "txt_leaderboard_user_name").text = "User: " + (leadVO.user?.name ?? "unknown");
+            GetChildTextByName(leadItem, "txt_leaderboard_time").text = "Time: " + leadVO.time;
+            //parent the item to the content container
+            leadItem.transform.SetParent(ContentContainer);
+            //reset the item's scale -- this can get munged with UI prefabs
+            leadItem.transform.localScale = Vector2.one;
+        }
     }
 
     public void OnCallQueryCoroutineComplete(string result) 
@@ -219,11 +237,20 @@ public class Main : MonoBehaviour
         Destroy(collider.gameObject);
     } 
 
-    void CheckGameComplete() {
+    async void CheckGameComplete() {
         if (_enemyKilledCounter == enemyCounter) {
             getTextGameWinGO.SetActive(true);
             float gameTime = Time.time - _timerStart;
             Debug.Log("Game Time: " + gameTime.ToString());
+
+            Query query = _gql.FindQuery("leaderboard", "AddLeaderboardScore", OperationType.Mutation);
+            string results = await _gql.Send(query.ToRequest(new Dictionary<string, object>
+            {
+                {"time", (int)gameTime},
+                {"score", _enemyKilledCounter},
+            }));
+            Debug.Log("results = " + results); 
+            _CallQueryCoroutine(); 
         }
     }
 
