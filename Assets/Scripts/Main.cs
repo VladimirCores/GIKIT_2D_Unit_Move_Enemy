@@ -95,6 +95,7 @@ public class Main : MonoBehaviour
 
     public async void _CallQueryCoroutine() 
     {
+        // https://github.com/NavidK0/SimpleGraphQL-For-Unity
         Query query = _gql.FindQuery("leaderboard", "GetLeaderboard", OperationType.Query);
         string results = await _gql.Send(query.ToRequest());
         LeaderboardsResult result = JsonUtility.FromJson<LeaderboardsResult>(results);
